@@ -93,7 +93,6 @@ def get_paste_buffer():
         result = win32clipboard.GetClipboardData()
     except TypeError:
         result = ''  #non-text
-        print("Clipboard does not contain text.")
     win32clipboard.CloseClipboard()
     return result 
 
