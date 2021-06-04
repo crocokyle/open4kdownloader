@@ -13,7 +13,7 @@ python3 Open4kDownloader.py
 
 ## Disclaimer
 
-I was fed up with other downloaders and wrote this in around 6 hours. It hasn't been thoroughly tested. These are the current known issues/TODO list.
+I was fed up with other downloaders and wrote this in about 6 hours. It hasn't been thoroughly tested. These are the current known issues/TODO list.
 
 - Downloading needs to be run in a separate thread to prevent window lag
 - Browse button needs to be disabled during downloads
