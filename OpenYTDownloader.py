@@ -4,7 +4,7 @@ import sys
 def installDependencies():
     subprocess.check_call([sys.executable, "-m", "pip", "install", "pytube"])
     subprocess.check_call([sys.executable, "-m", "pip", "install", "pillow"])
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "ffmpeg"])
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "ffmpeg-python"])
 
 installDependencies()
 
@@ -231,8 +231,15 @@ def getStreams(vid):
         messagebox.showerror(title="Failed to load streams", message="Could not load video streams: {}".format(e))
 
 def mixAV():
-
-    pass
+    print("Mixing A/V...")
+    vid_path = os.path.join(download_path, "temp_video.webm")
+    audio_path = os.path.join(download_path, "temp_audio.webm")
+    input_video = ffmpeg.input(vid_path)
+    input_audio = ffmpeg.input(audio_path)
+    output_path = os.path.join(download_path, "{}.webm".format(vid.title))
+    startLoading()
+    ffmpeg.concat(input_video, input_audio, v=1, a=1).output(output_path).run()
+    stopLoading()
 
 progression = []
 def on_progress(p1, p2, bytes_left):
@@ -291,17 +298,25 @@ def downloadStream():
     download_button["text"] = "Downloading..."
     selected_index = listbox.curselection()[0]
     itag = stream_maps[selected_index][0]
-    selected_videos = [vid.streams.itag_index[int(itag)]]
+    selected_videos = {}
+    selected_videos["video"] = vid.streams.itag_index[int(itag)]
     # Check to see if the stream is webm
     if stream_maps[selected_index][2] == "webm" and not stream_maps[selected_index][3] == "audio":
         # Download the audio along with it
         audio_stream = GetBestAudioStream()
-        selected_videos.append(audio_stream)
+        selected_videos["audio"] = audio_stream
 
-    print(len(selected_videos))
-    for download_stream in selected_videos:
-        print(download_stream)
-        download_stream.download(download_path)
+    if len(selected_videos) > 1:
+        for k, download_stream in selected_videos.items():
+            print(download_stream)
+            if k == "audio":
+                download_stream.download(output_path=download_path, filename="temp_audio")
+            else:
+                download_stream.download(output_path=download_path, filename="temp_video")
+        mixAV()
+
+    else:
+        selected_videos["video"].download(output_path=download_path)
 
 win = Tk()
 
