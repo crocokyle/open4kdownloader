@@ -214,15 +214,15 @@ def getStreams(vid):
                 mime_type=re.search('mime_type=\"(\w+\/\w+)\"', stream).group(1)
 
             if re.search('res=\"(\w+)\"', stream):
-                res=re.search('res=\"(\w+)\"', stream).group(1)
+                res=re.search('res=\"(\w+)\"', stream).group(1)[:-1]
             elif re.search('abr=\"(\w+)\"', stream):
                 res=re.search('abr=\"(\w+)\"', stream).group(1)[:-4]
 
             if re.search('fps=\"(\w+)\"', stream):
                 fps=re.search('fps=\"(\w+)\"', stream).group(1)
             
-            if mime_type and res and fps:
-                new_key = int(res[:-1])
+            if mime_type and res and fps and res != "Non":
+                new_key = int(res)
                 if mime_type not in stream_list:
                     stream_list[mime_type] = {}
                 stream_list[mime_type][new_key] = [itag, "Resolution: {} ---- Framerate: {} ---- Format: {}".format(res, fps, mime_type), mime_type.split('/')[1], stype, res]
@@ -239,7 +239,8 @@ def getStreams(vid):
 
     except Exception as e:
         stopLoading()
-        print("Could not load video streams: {}".format(e))
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        print("Could not load video streams: {} on line: {}".format(e, exc_tb.tb_lineno))
         messagebox.showerror(title="Failed to load streams", message="Could not load video streams: {}".format(e))
 
 
