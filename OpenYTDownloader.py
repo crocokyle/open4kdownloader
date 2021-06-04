@@ -30,6 +30,22 @@ vid_thumbnail_pack = False
 listbox = False
 title_label = False
 
+class mixAV(Thread):
+    def __init__(self):
+        Thread.__init__(self)
+        self.daemon = True
+        self.start()
+    def run(self):
+        print("Mixing A/V...")
+        vid_path = os.path.join(download_path, "temp_video.webm")
+        audio_path = os.path.join(download_path, "temp_audio.webm")
+        input_video = ffmpeg.input(vid_path)
+        input_audio = ffmpeg.input(audio_path)
+        output_path = os.path.join(download_path, "{}.webm".format(vid.title))
+        startLoading()
+        ffmpeg.concat(input_video, input_audio, v=1, a=1).output(output_path).run()
+        stopLoading()
+
 class GetClipboardText(Thread):
     def __init__(self):
         Thread.__init__(self)
@@ -230,16 +246,6 @@ def getStreams(vid):
         print("Could not load video streams: {}".format(e))
         messagebox.showerror(title="Failed to load streams", message="Could not load video streams: {}".format(e))
 
-def mixAV():
-    print("Mixing A/V...")
-    vid_path = os.path.join(download_path, "temp_video.webm")
-    audio_path = os.path.join(download_path, "temp_audio.webm")
-    input_video = ffmpeg.input(vid_path)
-    input_audio = ffmpeg.input(audio_path)
-    output_path = os.path.join(download_path, "{}.webm".format(vid.title))
-    startLoading()
-    ffmpeg.concat(input_video, input_audio, v=1, a=1).output(output_path).run()
-    stopLoading()
 
 progression = []
 def on_progress(p1, p2, bytes_left):
