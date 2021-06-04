@@ -6,6 +6,8 @@ This was intended to be cross platform but have only tested on Windows at the mo
 
 # Usage 
 ```cmd
+git clone https://gitlab.com/crocokyle/open4kdownloader.git
+cd open4kdownloader
 python3 Open4kDownloader.py
 ```
 
