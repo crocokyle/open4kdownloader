@@ -87,6 +87,37 @@ class loadingAnimation(Thread):
                 except EOFError:
                     pass # end of sequence
 
+class downloadStream(Thread):
+    def __init__(self):
+        Thread.__init__(self)
+        self.daemon = True
+        self.start()
+
+    def run(self):
+        global vid
+        download_button["state"] = DISABLED
+        download_button["text"] = "Downloading..."
+        selected_index = listbox.curselection()[0]
+        itag = stream_maps[selected_index][0]
+        selected_videos = {}
+        selected_videos["video"] = vid.streams.itag_index[int(itag)]
+        # Check to see if the stream is webm
+        if stream_maps[selected_index][2] == "webm" and not stream_maps[selected_index][3] == "audio":
+            # Download the audio along with it
+            audio_stream = GetBestAudioStream()
+            selected_videos["audio"] = audio_stream
+
+        if len(selected_videos) > 1:
+            for k, download_stream in selected_videos.items():
+                print(download_stream)
+                if k == "audio":
+                    download_stream.download(output_path=download_path, filename="temp_audio")
+                else:
+                    download_stream.download(output_path=download_path, filename="temp_video")
+            mixAV()
+        else:
+            selected_videos["video"].download(output_path=download_path)
+
 def get_paste_buffer():
     win32clipboard.OpenClipboard(0)
     try:
@@ -294,32 +325,6 @@ def GetBestAudioStream():
 
     itag = stream_maps[audio_stream][0]
     return vid.streams.itag_index[int(itag)]
-
-def downloadStream():
-    global vid
-    download_button["state"] = DISABLED
-    download_button["text"] = "Downloading..."
-    selected_index = listbox.curselection()[0]
-    itag = stream_maps[selected_index][0]
-    selected_videos = {}
-    selected_videos["video"] = vid.streams.itag_index[int(itag)]
-    # Check to see if the stream is webm
-    if stream_maps[selected_index][2] == "webm" and not stream_maps[selected_index][3] == "audio":
-        # Download the audio along with it
-        audio_stream = GetBestAudioStream()
-        selected_videos["audio"] = audio_stream
-
-    if len(selected_videos) > 1:
-        for k, download_stream in selected_videos.items():
-            print(download_stream)
-            if k == "audio":
-                download_stream.download(output_path=download_path, filename="temp_audio")
-            else:
-                download_stream.download(output_path=download_path, filename="temp_video")
-        mixAV()
-
-    else:
-        selected_videos["video"].download(output_path=download_path)
 
 win = Tk()
 
