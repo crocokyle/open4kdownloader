@@ -42,9 +42,7 @@ class mixAV(Thread):
         input_video = ffmpeg.input(vid_path)
         input_audio = ffmpeg.input(audio_path)
         output_path = os.path.join(download_path, "{}.webm".format(vid.title))
-        startLoading()
         ffmpeg.concat(input_video, input_audio, v=1, a=1).output(output_path).run()
-        stopLoading()
 
 class GetClipboardText(Thread):
     def __init__(self):
@@ -90,14 +88,14 @@ class loadingAnimation(Thread):
                     pass # end of sequence
 
 def get_paste_buffer():
-            win32clipboard.OpenClipboard(0)
-            try:
-                result = win32clipboard.GetClipboardData()
-            except TypeError:
-                result = ''  #non-text
-                print("Clipboard does not contain text.")
-            win32clipboard.CloseClipboard()
-            return result 
+    win32clipboard.OpenClipboard(0)
+    try:
+        result = win32clipboard.GetClipboardData()
+    except TypeError:
+        result = ''  #non-text
+        print("Clipboard does not contain text.")
+    win32clipboard.CloseClipboard()
+    return result 
 
 def getDownloadPath():
     home = os.path.expanduser("~")
@@ -109,7 +107,6 @@ def startLoading(clear):
     if clear:
         download_button["state"] = DISABLED
         if vid_thumbnail_pack and listbox and title_label:
-            print("your in")
             vid_thumbnail_pack.destroy()
             listbox.destroy()
             title_label.destroy()
