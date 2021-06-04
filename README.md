@@ -22,3 +22,4 @@ I was fed up with other downloaders and wrote this in about 6 hours. It hasn't b
 - Needs some sort of status or console log within the GUI
 - Need to implement log files
 - Need to save the download directory preference
+- Needs a nicer color scheme
